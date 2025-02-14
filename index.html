@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Солнце и тучи</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: skyblue;
+        }
+        #sun {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            background: yellow;
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .cloud {
+            position: absolute;
+            width: 80px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+            cursor: pointer;
+        }
+        .dissolve {
+            animation: dissolve 0.5s forwards;
+        }
+        @keyframes dissolve {
+            opacity: 0;
+            transform: scale(1.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="sun"></div>
+    <script>
+        const clouds = [];
+        const cloudCount = 5;
+
+        // Создание облаков
+        for (let i = 0; i < cloudCount; i++) {
+            const cloud = document.createElement('div');
+            cloud.classList.add('cloud');
+            cloud.style.top = Math.random() * 300 + 'px';
+            cloud.style.left = Math.random() * window.innerWidth + 'px';
+            cloud.addEventListener('click', () => dissolveCloud(cloud));
+            document.body.appendChild(cloud);
+            clouds.push(cloud);
+        }
+
+        function dissolveCloud(cloud) {
+            cloud.classList.add('dissolve');
+            cloud.addEventListener('animationend', () => {
+                cloud.remove();
+                clouds.splice(clouds.indexOf(cloud), 1);
+                if (clouds.length === 0) {
+                    alert('Вы победили! Солнце вернулось!');
+                    // Закрытие окна (может быть заблокировано браузером)
+                    window.close();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
