@@ -63,25 +63,30 @@
             cloud.classList.add('cloud');
 
             // Генерация случайной позиции
-            let cloudTop, cloudLeft;
-            do {
-                cloudTop = Math.random() * (window.innerHeight - 50) + 'px';
-                cloudLeft = Math.random() * (window.innerWidth - 80) + 'px';
+            let cloudTop = Math.random() * 300 + 'px';
+            let cloudLeft = Math.random() * window.innerWidth + 'px';
 
-                // Проверка, перекрывает ли облако солнце
-                const cloudRect = {
-                    left: parseFloat(cloudLeft),
-                    right: parseFloat(cloudLeft) + 80, // ширина облака
-                    top: parseFloat(cloudTop),
-                    bottom: parseFloat(cloudTop) + 50 // высота облака
-                };
+            // Проверка, перекрывает ли облако солнце
+            const cloudRect = {
+                left: parseFloat(cloudLeft),
+                right: parseFloat(cloudLeft) + 80, // ширина облака
+                top: parseFloat(cloudTop),
+                bottom: parseFloat(cloudTop) + 50 // высота облака
+            };
 
-            } while (
+            // Если облако попадает в область солнца, устанавливаем его позицию так, чтобы оно перекрывало солнце
+            if (
                 cloudRect.left < sunRect.right &&
                 cloudRect.right > sunRect.left &&
                 cloudRect.top < sunRect.bottom &&
                 cloudRect.bottom > sunRect.top
-            );
+            ) {
+                // Устанавливаем облако на уровень солнца с небольшим смещением
+                const offsetX = (Math.random() - 0.5) * 40; // Случайное смещение по X
+                const offsetY = (Math.random() - 0.5) * 20; // Случайное смещение по Y
+                cloudTop = sunRect.top + offsetY + 'px'; // Устанавливаем облако на уровень солнца с смещением
+                cloudLeft = sunRect.left + offsetX + 'px'; // Устанавливаем облако на уровень солнца с смещением
+            }
 
             cloud.style.top = cloudTop;
             cloud.style.left = cloudLeft;
@@ -92,7 +97,7 @@
 
         function dissolveCloud(cloud) {
             cloud.classList.add('dissolve');
-            cloud.addEventListener('transitionend', () => {
+            cloud.addEventListener('animationend', () => {
                 cloud.remove();
                 clouds.splice(clouds.indexOf(cloud), 1);
                 checkVictory();
