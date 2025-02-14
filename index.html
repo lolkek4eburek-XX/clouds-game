@@ -9,6 +9,7 @@
             margin: 0;
             overflow: hidden;
             background: skyblue;
+            position: relative;
         }
         #sun {
             position: absolute;
@@ -17,19 +18,27 @@
             transform: translateX(-50%);
             width: 100px;
             height: 100px;
-            background: yellow;
-            border-radius: 50%;
+            background: url('https://example.com/sun.png') no-repeat center center;
+            background-size: contain;
             z-index: 10;
         }
         .cloud {
             position: absolute;
             width: 80px;
             height: 50px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            background: url('https://example.com/cloud.png') no-repeat center center;
+            background-size: contain;
             z-index: 5;
             cursor: pointer;
+            animation: flyIn 2s forwards;
+        }
+        @keyframes flyIn {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
         }
         .dissolve {
             animation: dissolve 0.5s forwards;
@@ -62,12 +71,16 @@
             cloud.addEventListener('animationend', () => {
                 cloud.remove();
                 clouds.splice(clouds.indexOf(cloud), 1);
-                if (clouds.length === 0) {
-                    alert('Вы победили! Солнце вернулось!');
-                    // Закрытие окна (может быть заблокировано браузером)
-                    window.close();
-                }
+                checkVictory();
             });
+        }
+
+        function checkVictory() {
+            if (clouds.length === 0) {
+                alert('Вы победили! Солнце вернулось!');
+                // Закрытие окна (может быть заблокировано браузером)
+                window.close();
+            }
         }
     </script>
 </body>
