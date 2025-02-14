@@ -28,7 +28,7 @@
             height: 50px;
             background: url('https://cdn-icons-png.flaticon.com/512/61/61084.png') no-repeat center center;
             background-size: contain;
-            z-index: 5;
+            z-index: 15; /* Облака на переднем плане */
             cursor: pointer;
             animation: flyIn 2s forwards;
         }
@@ -42,7 +42,6 @@
         }
         .dissolve {
             transition: opacity ease 0.2s;
-            transition: transform ease 0.2s;
             opacity: 0;
             transform: scale(1.5);
         }
@@ -52,14 +51,42 @@
     <div id="sun"></div>
     <script>
         const clouds = [];
-        const cloudCount = 5;
+        const cloudCount = 10;
+
+        // Получаем координаты солнца
+        const sun = document.getElementById('sun');
+        const sunRect = sun.getBoundingClientRect();
 
         // Создание облаков
         for (let i = 0; i < cloudCount; i++) {
             const cloud = document.createElement('div');
             cloud.classList.add('cloud');
-            cloud.style.top = Math.random() * 300 + 'px';
-            cloud.style.left = Math.random() * window.innerWidth + 'px';
+
+            // Генерация случайной позиции
+            let cloudTop = Math.random() * 300 + 'px';
+            let cloudLeft = Math.random() * window.innerWidth + 'px';
+
+            // Проверка, перекрывает ли облако солнце
+            const cloudRect = {
+                left: parseFloat(cloudLeft),
+                right: parseFloat(cloudLeft) + 80, // ширина облака
+                top: parseFloat(cloudTop),
+                bottom: parseFloat(cloudTop) + 50 // высота облака
+            };
+
+            // Если облако попадает в область солнца, устанавливаем его позицию так, чтобы оно перекрывало солнце
+            if (
+                cloudRect.left < sunRect.right &&
+                cloudRect.right > sunRect.left &&
+                cloudRect.top < sunRect.bottom &&
+                cloudRect.bottom > sunRect.top
+            ) {
+                cloudTop = sunRect.top + 'px'; // Устанавливаем облако на уровень солнца
+                cloudLeft = sunRect.left + 'px'; // Устанавливаем облако на уровень солнца
+            }
+
+            cloud.style.top = cloudTop;
+            cloud.style.left = cloudLeft;
             cloud.addEventListener('click', () => dissolveCloud(cloud));
             document.body.appendChild(cloud);
             clouds.push(cloud);
@@ -77,7 +104,6 @@
         function checkVictory() {
             if (clouds.length === 0) {
                 alert('Вы победили! Солнце вернулось!');
-                // Закрытие окна (может быть заблокировано браузером)
                 window.close();
             }
         }
